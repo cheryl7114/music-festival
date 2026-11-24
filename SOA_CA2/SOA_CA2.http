@@ -1,6 +1,19 @@
 @SOA_CA2_HostAddress = http://localhost:5062
 
-GET {{SOA_CA2_HostAddress}}/weatherforecast/
+POST {{SOA_CA2_HostAddress}}/api/Festival
+Content-Type: application/json
+
+{
+  "name": "Summer Sessions",
+  "location": "Dundalk",
+  "startDate": "2027-06-18",
+  "endDate": "2027-06-20"
+}
+
+###
+
+# Use the ID from the POST response.
+GET {{SOA_CA2_HostAddress}}/api/Festival/1
 Accept: application/json
 
 ###
