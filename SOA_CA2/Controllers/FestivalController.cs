@@ -54,6 +54,13 @@ public class FestivalController : ControllerBase
         return updated ? NoContent() : NotFound();
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteFestival(int id, CancellationToken cancellationToken)
+    {
+        var deleted = await _repository.DeleteAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
+
     private static Festival ToFestival(FestivalRequestDto request)
     {
         return new Festival

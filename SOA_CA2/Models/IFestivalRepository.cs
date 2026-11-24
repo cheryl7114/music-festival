@@ -6,4 +6,5 @@ public interface IFestivalRepository
     Task<Festival?> FindAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(Festival festival, CancellationToken cancellationToken);
     Task<bool> UpdateAsync(Festival festival, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
 }
