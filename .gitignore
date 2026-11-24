@@ -1,5 +1,7 @@
 bin/
 obj/
 /packages/
+festivals.db
+festivals.db-*
 riderModule.iml
 /_ReSharper.Caches/

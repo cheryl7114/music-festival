@@ -1,17 +1,32 @@
+using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+using SOA_CA2.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<FestivalContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("Festivals")
+        ?? "Data Source=festivals.db"));
+builder.Services.AddScoped<IFestivalRepository, FestivalRepository>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<FestivalContext>();
+    await context.Database.EnsureCreatedAsync();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
