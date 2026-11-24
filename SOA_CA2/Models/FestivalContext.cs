@@ -6,4 +6,10 @@ public class FestivalContext(DbContextOptions<FestivalContext> options)
     : DbContext(options)
 {
     public DbSet<Festival> Festivals { get; set; } = null!;
+    public DbSet<Organiser> Organisers { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Organiser>().HasIndex(organiser => organiser.Email).IsUnique();
+    }
 }
