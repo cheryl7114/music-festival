@@ -1,4 +1,6 @@
 @SOA_CA2_HostAddress = http://localhost:5062
+# Set this to the ID returned by the POST request.
+@festivalId = 1
 
 POST {{SOA_CA2_HostAddress}}/api/Festival
 Content-Type: application/json
@@ -17,8 +19,19 @@ Accept: application/json
 
 ###
 
-# Use the ID from the POST response.
-GET {{SOA_CA2_HostAddress}}/api/Festival/1
+GET {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
 Accept: application/json
+
+###
+
+PUT {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Content-Type: application/json
+
+{
+  "name": "Summer Sessions",
+  "location": "Drogheda",
+  "startDate": "2027-06-18",
+  "endDate": "2027-06-21"
+}
 
 ###

@@ -36,25 +36,33 @@ public class FestivalController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<FestivalDto>> PostFestival(
-        CreateFestivalDto request, CancellationToken cancellationToken)
+        FestivalRequestDto request, CancellationToken cancellationToken)
     {
-        if (request.EndDate < request.StartDate)
-        {
-            ModelState.AddModelError(nameof(request.EndDate), "End date must be on or after the start date.");
-            return ValidationProblem(ModelState);
-        }
+        var festival = ToFestival(request);
+        await _repository.AddAsync(festival, cancellationToken);
 
-        var festival = new Festival
+        return CreatedAtAction(nameof(GetFestival), new { id = festival.Id }, ToDto(festival));
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> PutFestival(
+        int id, FestivalRequestDto request, CancellationToken cancellationToken)
+    {
+        var festival = ToFestival(request);
+        festival.Id = id;
+        var updated = await _repository.UpdateAsync(festival, cancellationToken);
+        return updated ? NoContent() : NotFound();
+    }
+
+    private static Festival ToFestival(FestivalRequestDto request)
+    {
+        return new Festival
         {
             Name = request.Name.Trim(),
             Location = request.Location.Trim(),
             StartDate = request.StartDate!.Value,
             EndDate = request.EndDate!.Value
         };
-
-        await _repository.AddAsync(festival, cancellationToken);
-
-        return CreatedAtAction(nameof(GetFestival), new { id = festival.Id }, ToDto(festival));
     }
 
     private static FestivalDto ToDto(Festival festival)
