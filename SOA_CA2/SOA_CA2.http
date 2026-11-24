@@ -12,6 +12,11 @@ Content-Type: application/json
 
 ###
 
+GET {{SOA_CA2_HostAddress}}/api/Festival
+Accept: application/json
+
+###
+
 # Use the ID from the POST response.
 GET {{SOA_CA2_HostAddress}}/api/Festival/1
 Accept: application/json

@@ -15,6 +15,13 @@ public class FestivalController : ControllerBase
         _repository = repository;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<FestivalDto>>> GetFestivals(CancellationToken cancellationToken)
+    {
+        var festivals = await _repository.ListAsync(cancellationToken);
+        return Ok(festivals.Select(ToDto));
+    }
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FestivalDto>> GetFestival(int id, CancellationToken cancellationToken)
     {
