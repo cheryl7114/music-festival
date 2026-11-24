@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SOA_CA2.Models;
@@ -11,6 +12,8 @@ builder.Services.AddDbContext<FestivalContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Festivals")
         ?? "Data Source=festivals.db"));
 builder.Services.AddScoped<IFestivalRepository, FestivalRepository>();
+builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
+builder.Services.AddScoped<IPasswordHasher<Organiser>, PasswordHasher<Organiser>>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

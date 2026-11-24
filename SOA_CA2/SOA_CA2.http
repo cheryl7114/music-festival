@@ -39,3 +39,14 @@ Content-Type: application/json
 DELETE {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
 
 ###
+
+# Local test credentials. Send twice to verify a 409 response for the duplicate.
+POST {{SOA_CA2_HostAddress}}/api/Organiser/register
+Content-Type: application/json
+
+{
+  "email": "organiser@example.com",
+  "password": "Festival demo password 2027"
+}
+
+###
