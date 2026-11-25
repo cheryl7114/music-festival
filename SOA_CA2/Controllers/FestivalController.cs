@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SOA_CA2.DTOs;
 using SOA_CA2.Models;
@@ -34,11 +36,18 @@ public class FestivalController : ControllerBase
         return ToDto(festival);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<FestivalDto>> PostFestival(
         FestivalRequestDto request, CancellationToken cancellationToken)
     {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
         var festival = ToFestival(request);
+        festival.OrganiserId = organiserId;
         await _repository.AddAsync(festival, cancellationToken);
 
         return CreatedAtAction(nameof(GetFestival), new { id = festival.Id }, ToDto(festival));
