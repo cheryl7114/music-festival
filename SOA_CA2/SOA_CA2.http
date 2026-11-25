@@ -50,3 +50,14 @@ Content-Type: application/json
 }
 
 ###
+
+# Remember to register the account above before running this login.
+POST {{SOA_CA2_HostAddress}}/api/Organiser/login`
+Content-Type: application/json
+
+{
+  "email": "Organiser@Example.com",
+  "password": "Festival demo password 2027"
+}
+
+###

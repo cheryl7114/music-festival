@@ -7,6 +7,12 @@ public class OrganiserRepository(FestivalContext context) : IOrganiserRepository
 {
     private const int SqliteUniqueConstraint = 2067;
 
+    public async Task<Organiser?> FindByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await context.Organisers.AsNoTracking()
+            .SingleOrDefaultAsync(organiser => organiser.Email == email, cancellationToken);
+    }
+
     public async Task<bool> TryAddAsync(Organiser organiser, CancellationToken cancellationToken)
     {
         context.Organisers.Add(organiser);
