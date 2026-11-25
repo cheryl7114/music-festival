@@ -29,6 +29,7 @@ Accept: application/json
 ###
 
 PUT {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {

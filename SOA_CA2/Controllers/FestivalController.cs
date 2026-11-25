@@ -65,13 +65,19 @@ public class FestivalController : ControllerBase
         return CreatedAtAction(nameof(GetFestival), new { id = festival.Id }, ToDto(festival));
     }
 
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> PutFestival(
         int id, FestivalRequestDto request, CancellationToken cancellationToken)
     {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
         var festival = ToFestival(request);
         festival.Id = id;
-        var updated = await _repository.UpdateAsync(festival, cancellationToken);
+        var updated = await _repository.UpdateAsync(festival, organiserId, cancellationToken);
         return updated ? NoContent() : NotFound();
     }
 

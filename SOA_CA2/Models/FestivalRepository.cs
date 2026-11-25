@@ -26,9 +26,10 @@ public class FestivalRepository(FestivalContext context) : IFestivalRepository
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> UpdateAsync(Festival festival, CancellationToken cancellationToken)
+    public async Task<bool> UpdateAsync(Festival festival, int organiserId, CancellationToken cancellationToken)
     {
-        var affectedRows = await context.Festivals.Where(existing => existing.Id == festival.Id)
+        var affectedRows = await context.Festivals
+            .Where(existing => existing.Id == festival.Id && existing.OrganiserId == organiserId)
             .ExecuteUpdateAsync(update => update
                 .SetProperty(existing => existing.Name, festival.Name)
                 .SetProperty(existing => existing.Location, festival.Location)
