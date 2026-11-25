@@ -30,10 +30,16 @@ public class FestivalController : ControllerBase
         return Ok(festivals.Select(ToDto));
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FestivalDto>> GetFestival(int id, CancellationToken cancellationToken)
     {
-        var festival = await _repository.FindAsync(id, cancellationToken);
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var festival = await _repository.FindAsync(id, organiserId, cancellationToken);
         if (festival == null)
         {
             return NotFound();

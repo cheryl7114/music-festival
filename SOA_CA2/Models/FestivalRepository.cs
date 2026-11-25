@@ -12,9 +12,12 @@ public class FestivalRepository(FestivalContext context) : IFestivalRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Festival?> FindAsync(int id, CancellationToken cancellationToken)
+    public async Task<Festival?> FindAsync(int id, int organiserId, CancellationToken cancellationToken)
     {
-        return await context.Festivals.FindAsync([id], cancellationToken);
+        return await context.Festivals.AsNoTracking()
+            .SingleOrDefaultAsync(
+                festival => festival.Id == id && festival.OrganiserId == organiserId,
+                cancellationToken);
     }
 
     public async Task AddAsync(Festival festival, CancellationToken cancellationToken)

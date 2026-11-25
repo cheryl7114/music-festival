@@ -23,6 +23,7 @@ Accept: application/json
 ###
 
 GET {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Authorization: Bearer {{accessToken}}
 Accept: application/json
 
 ###
