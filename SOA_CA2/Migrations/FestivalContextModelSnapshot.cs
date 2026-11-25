@@ -18,7 +18,9 @@ public class FestivalContextModelSnapshot : ModelSnapshot
             entity.Property<string>("Location").IsRequired().HasColumnType("TEXT");
             entity.Property<DateOnly>("StartDate").HasColumnType("TEXT");
             entity.Property<DateOnly>("EndDate").HasColumnType("TEXT");
+            entity.Property<int?>("OrganiserId").HasColumnType("INTEGER");
             entity.HasKey("Id");
+            entity.HasIndex("OrganiserId");
             entity.ToTable("Festivals");
         });
 
@@ -30,6 +32,14 @@ public class FestivalContextModelSnapshot : ModelSnapshot
             entity.HasKey("Id");
             entity.HasIndex("Email").IsUnique();
             entity.ToTable("Organisers");
+        });
+
+        modelBuilder.Entity("SOA_CA2.Models.Festival", entity =>
+        {
+            entity.HasOne("SOA_CA2.Models.Organiser", null)
+                .WithMany()
+                .HasForeignKey("OrganiserId")
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

@@ -11,5 +11,10 @@ public class FestivalContext(DbContextOptions<FestivalContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Organiser>().HasIndex(organiser => organiser.Email).IsUnique();
+        modelBuilder.Entity<Festival>()
+            .HasOne<Organiser>()
+            .WithMany()
+            .HasForeignKey(festival => festival.OrganiserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
