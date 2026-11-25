@@ -17,10 +17,16 @@ public class FestivalController : ControllerBase
         _repository = repository;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FestivalDto>>> GetFestivals(CancellationToken cancellationToken)
     {
-        var festivals = await _repository.ListAsync(cancellationToken);
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var festivals = await _repository.ListAsync(organiserId, cancellationToken);
         return Ok(festivals.Select(ToDto));
     }
 

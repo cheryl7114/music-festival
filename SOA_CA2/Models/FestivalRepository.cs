@@ -4,9 +4,11 @@ namespace SOA_CA2.Models;
 
 public class FestivalRepository(FestivalContext context) : IFestivalRepository
 {
-    public async Task<List<Festival>> ListAsync(CancellationToken cancellationToken)
+    public async Task<List<Festival>> ListAsync(int organiserId, CancellationToken cancellationToken)
     {
-        return await context.Festivals.AsNoTracking().OrderBy(festival => festival.Id)
+        return await context.Festivals.AsNoTracking()
+            .Where(festival => festival.OrganiserId == organiserId)
+            .OrderBy(festival => festival.Id)
             .ToListAsync(cancellationToken);
     }
 

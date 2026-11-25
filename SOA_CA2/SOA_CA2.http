@@ -17,6 +17,7 @@ Content-Type: application/json
 ###
 
 GET {{SOA_CA2_HostAddress}}/api/Festival
+Authorization: Bearer {{accessToken}}
 Accept: application/json
 
 ###
