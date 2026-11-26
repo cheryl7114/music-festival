@@ -39,6 +39,11 @@ Content-Type: application/json
 
 ###
 
+DELETE {{SOA_CA2_HostAddress}}/api/Performer/{{performerId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
 # Remember to run organiser login first to set accessToken.
 POST {{SOA_CA2_HostAddress}}/api/Festival
 Authorization: Bearer {{accessToken}}

@@ -73,4 +73,17 @@ public class PerformerController : ControllerBase
         var updated = await _repository.UpdateAsync(id, organiserId, request.Name.Trim(), cancellationToken);
         return updated ? NoContent() : NotFound();
     }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeletePerformer(int id, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var deleted = await _repository.DeleteAsync(id, organiserId, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
 }
