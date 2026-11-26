@@ -29,6 +29,16 @@ Accept: application/json
 
 ###
 
+PUT {{SOA_CA2_HostAddress}}/api/Performer/{{performerId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Justin Beeber"
+}
+
+###
+
 # Remember to run organiser login first to set accessToken.
 POST {{SOA_CA2_HostAddress}}/api/Festival
 Authorization: Bearer {{accessToken}}

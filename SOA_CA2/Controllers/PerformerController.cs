@@ -40,7 +40,7 @@ public class PerformerController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<PerformerDto>> PostPerformer(
+    public async Task<ActionResult<PerformerDto>> CreatePerformer(
         PerformerRequestDto request, CancellationToken cancellationToken)
     {
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
@@ -58,5 +58,19 @@ public class PerformerController : ControllerBase
 
         return CreatedAtAction(nameof(GetPerformer), new { id = performer.Id },
             new PerformerDto(performer.Id, performer.Name));
+    }
+
+    [Authorize]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdatePerformer(
+        int id, PerformerRequestDto request, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var updated = await _repository.UpdateAsync(id, organiserId, request.Name.Trim(), cancellationToken);
+        return updated ? NoContent() : NotFound();
     }
 }
