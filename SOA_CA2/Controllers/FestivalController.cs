@@ -50,7 +50,7 @@ public class FestivalController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<FestivalDto>> PostFestival(
+    public async Task<ActionResult<FestivalDto>> CreateFestival(
         FestivalRequestDto request, CancellationToken cancellationToken)
     {
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
@@ -67,7 +67,7 @@ public class FestivalController : ControllerBase
 
     [Authorize]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> PutFestival(
+    public async Task<IActionResult> UpdateFestival(
         int id, FestivalRequestDto request, CancellationToken cancellationToken)
     {
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
