@@ -5,3 +5,4 @@ festivals.db
 festivals.db-*
 riderModule.iml
 /_ReSharper.Caches/
+.idea/**/dataSources.xml

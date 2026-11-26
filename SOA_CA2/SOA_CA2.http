@@ -1,8 +1,10 @@
 @SOA_CA2_HostAddress = http://localhost:5062
-# Set this to the ID returned by the POST request.
+# After you create a festival, replace 1 with the festival ID from the response.
 @festivalId = 1
 
+# Remember to run organiser login first to set accessToken.
 POST {{SOA_CA2_HostAddress}}/api/Festival
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
@@ -15,16 +17,19 @@ Content-Type: application/json
 ###
 
 GET {{SOA_CA2_HostAddress}}/api/Festival
+Authorization: Bearer {{accessToken}}
 Accept: application/json
 
 ###
 
 GET {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Authorization: Bearer {{accessToken}}
 Accept: application/json
 
 ###
 
 PUT {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
@@ -37,5 +42,36 @@ Content-Type: application/json
 ###
 
 DELETE {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Local test credentials. Send twice to verify a 409 response for the duplicate.
+POST {{SOA_CA2_HostAddress}}/api/Organiser/register
+Content-Type: application/json
+
+{
+  "email": "organiser@example.com",
+  "password": "Festival demo password 2027"
+}
+
+###
+
+# Remember to register the account above before running this login.
+POST {{SOA_CA2_HostAddress}}/api/Organiser/login
+Content-Type: application/json
+
+{
+  "email": "Organiser@Example.com",
+  "password": "Festival demo password 2027"
+}
+
+> {%
+    if (response.status === 200) {
+        client.global.set("accessToken", response.body.accessToken);
+    } else {
+        client.global.clear("accessToken");
+    }
+%}
 
 ###

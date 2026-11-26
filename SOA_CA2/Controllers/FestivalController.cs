@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SOA_CA2.DTOs;
 using SOA_CA2.Models;
@@ -15,17 +17,29 @@ public class FestivalController : ControllerBase
         _repository = repository;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FestivalDto>>> GetFestivals(CancellationToken cancellationToken)
     {
-        var festivals = await _repository.ListAsync(cancellationToken);
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var festivals = await _repository.ListAsync(organiserId, cancellationToken);
         return Ok(festivals.Select(ToDto));
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FestivalDto>> GetFestival(int id, CancellationToken cancellationToken)
     {
-        var festival = await _repository.FindAsync(id, cancellationToken);
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var festival = await _repository.FindAsync(id, organiserId, cancellationToken);
         if (festival == null)
         {
             return NotFound();
@@ -34,30 +48,49 @@ public class FestivalController : ControllerBase
         return ToDto(festival);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<FestivalDto>> PostFestival(
         FestivalRequestDto request, CancellationToken cancellationToken)
     {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
         var festival = ToFestival(request);
+        festival.OrganiserId = organiserId;
         await _repository.AddAsync(festival, cancellationToken);
 
         return CreatedAtAction(nameof(GetFestival), new { id = festival.Id }, ToDto(festival));
     }
 
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> PutFestival(
         int id, FestivalRequestDto request, CancellationToken cancellationToken)
     {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
         var festival = ToFestival(request);
         festival.Id = id;
-        var updated = await _repository.UpdateAsync(festival, cancellationToken);
+        var updated = await _repository.UpdateAsync(festival, organiserId, cancellationToken);
         return updated ? NoContent() : NotFound();
     }
 
+    [Authorize]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteFestival(int id, CancellationToken cancellationToken)
     {
-        var deleted = await _repository.DeleteAsync(id, cancellationToken);
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var deleted = await _repository.DeleteAsync(id, organiserId, cancellationToken);
         return deleted ? NoContent() : NotFound();
     }
 

@@ -7,4 +7,5 @@ public class Festival
     public required string Location { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
+    public int? OrganiserId { get; set; }
 }
