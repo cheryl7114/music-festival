@@ -39,9 +39,10 @@ public class FestivalRepository(FestivalContext context) : IFestivalRepository
         return affectedRows > 0;
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken)
     {
-        var affectedRows = await context.Festivals.Where(festival => festival.Id == id)
+        var affectedRows = await context.Festivals
+            .Where(festival => festival.Id == id && festival.OrganiserId == organiserId)
             .ExecuteDeleteAsync(cancellationToken);
 
         return affectedRows > 0;

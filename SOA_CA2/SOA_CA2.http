@@ -42,6 +42,7 @@ Content-Type: application/json
 ###
 
 DELETE {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}
+Authorization: Bearer {{accessToken}}
 
 ###
 
