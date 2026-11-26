@@ -1,6 +1,8 @@
 @SOA_CA2_HostAddress = http://localhost:5062
 # After you create a festival, replace 1 with the festival ID from the response.
 @festivalId = 1
+# After you add a performer, replace 1 with the performer ID from the response.
+@performerId = 1
 
 ###
 
@@ -16,6 +18,12 @@ Content-Type: application/json
 ###
 
 GET {{SOA_CA2_HostAddress}}/api/Performer
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+GET {{SOA_CA2_HostAddress}}/api/Performer/{{performerId}}
 Authorization: Bearer {{accessToken}}
 Accept: application/json
 

@@ -11,6 +11,12 @@ public class PerformerRepository(FestivalContext context) : IPerformerRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Performer?> FindAsync(int id, CancellationToken cancellationToken)
+    {
+        return await context.Performers.AsNoTracking()
+            .SingleOrDefaultAsync(performer => performer.Id == id, cancellationToken);
+    }
+
     public async Task AddAsync(Performer performer, CancellationToken cancellationToken)
     {
         context.Performers.Add(performer);

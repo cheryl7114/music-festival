@@ -26,6 +26,19 @@ public class PerformerController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PerformerDto>> GetPerformer(int id, CancellationToken cancellationToken)
+    {
+        var performer = await _repository.FindAsync(id, cancellationToken);
+        if (performer == null)
+        {
+            return NotFound();
+        }
+
+        return new PerformerDto(performer.Id, performer.Name);
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<PerformerDto>> PostPerformer(
         PerformerRequestDto request, CancellationToken cancellationToken)
@@ -43,6 +56,7 @@ public class PerformerController : ControllerBase
 
         await _repository.AddAsync(performer, cancellationToken);
 
-        return StatusCode(StatusCodes.Status201Created, new PerformerDto(performer.Id, performer.Name));
+        return CreatedAtAction(nameof(GetPerformer), new { id = performer.Id },
+            new PerformerDto(performer.Id, performer.Name));
     }
 }
