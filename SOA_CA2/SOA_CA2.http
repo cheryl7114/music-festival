@@ -2,6 +2,19 @@
 # After you create a festival, replace 1 with the festival ID from the response.
 @festivalId = 1
 
+###
+
+# Run organiser login first, then add a performer.
+POST {{SOA_CA2_HostAddress}}/api/Performer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "The Harbour Lights"
+}
+
+###
+
 # Remember to run organiser login first to set accessToken.
 POST {{SOA_CA2_HostAddress}}/api/Festival
 Authorization: Bearer {{accessToken}}
