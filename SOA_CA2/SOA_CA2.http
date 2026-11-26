@@ -10,8 +10,14 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "name": "The Harbour Lights"
+  "name": "Justin Bieber"
 }
+
+###
+
+GET {{SOA_CA2_HostAddress}}/api/Performer
+Authorization: Bearer {{accessToken}}
+Accept: application/json
 
 ###
 

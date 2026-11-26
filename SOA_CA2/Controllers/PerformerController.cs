@@ -18,6 +18,14 @@ public class PerformerController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<PerformerDto>>> GetPerformers(CancellationToken cancellationToken)
+    {
+        var performers = await _repository.ListAsync(cancellationToken);
+        return Ok(performers.Select(performer => new PerformerDto(performer.Id, performer.Name)));
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<PerformerDto>> PostPerformer(
         PerformerRequestDto request, CancellationToken cancellationToken)
