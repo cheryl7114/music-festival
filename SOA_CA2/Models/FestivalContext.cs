@@ -7,6 +7,7 @@ public class FestivalContext(DbContextOptions<FestivalContext> options)
 {
     public DbSet<Festival> Festivals { get; set; } = null!;
     public DbSet<Organiser> Organisers { get; set; } = null!;
+    public DbSet<Performer> Performers { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -15,6 +16,11 @@ public class FestivalContext(DbContextOptions<FestivalContext> options)
             .HasOne<Organiser>()
             .WithMany()
             .HasForeignKey(festival => festival.OrganiserId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Performer>()
+            .HasOne<Organiser>()
+            .WithMany()
+            .HasForeignKey(performer => performer.OrganiserId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
