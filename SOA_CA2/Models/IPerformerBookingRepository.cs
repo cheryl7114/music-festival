@@ -10,4 +10,6 @@ public interface IPerformerBookingRepository
 
     Task<PerformerBookingSaveResult> UpdateAsync(
         PerformerBooking booking, int organiserId, CancellationToken cancellationToken);
+
+    Task<bool> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken);
 }

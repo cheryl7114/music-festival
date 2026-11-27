@@ -17,6 +17,15 @@ public class PerformerBookingRepository(FestivalContext context) : IPerformerBoo
             .SingleOrDefaultAsync(booking => booking.Id == id, cancellationToken);
     }
 
+    public async Task<bool> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken)
+    {
+        var affectedRows = await OwnedBookings(organiserId)
+            .Where(booking => booking.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return affectedRows > 0;
+    }
+
     private IQueryable<PerformerBooking> OwnedBookings(int organiserId)
     {
         return context.PerformerBookings.Where(booking => context.Festivals.Any(festival =>

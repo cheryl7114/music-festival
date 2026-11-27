@@ -83,6 +83,19 @@ public class PerformerBookingController : ControllerBase
         return result == PerformerBookingSaveResult.Saved ? NoContent() : BookingError(result);
     }
 
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeletePerformerBooking(int id, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var deleted = await _repository.DeleteAsync(id, organiserId, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
+
     private static PerformerBooking ToBooking(PerformerBookingRequestDto request)
     {
         return new PerformerBooking
