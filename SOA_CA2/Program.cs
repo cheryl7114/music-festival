@@ -14,6 +14,7 @@ builder.Services.AddDbContext<FestivalContext>(options =>
         ?? "Data Source=festivals.db"));
 builder.Services.AddScoped<IFestivalRepository, FestivalRepository>();
 builder.Services.AddScoped<IPerformerRepository, PerformerRepository>();
+builder.Services.AddScoped<IPerformerBookingRepository, PerformerBookingRepository>();
 builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
 builder.Services.AddScoped<IPasswordHasher<Organiser>, PasswordHasher<Organiser>>();
 builder.Services.AddAuthentication(BearerTokenDefaults.AuthenticationScheme)

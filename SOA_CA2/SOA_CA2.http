@@ -6,6 +6,21 @@
 
 ###
 
+# Use one of your festivals and a performer from the shared catalogue.
+POST {{SOA_CA2_HostAddress}}/api/PerformerBooking
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "festivalId": {{festivalId}},
+  "performerId": {{performerId}},
+  "startsAtUtc": "2027-06-18T19:00:00Z",
+  "endsAtUtc": "2027-06-18T20:00:00Z",
+  "fee": 250.00
+}
+
+###
+
 # Run organiser login first, then add a performer.
 POST {{SOA_CA2_HostAddress}}/api/Performer
 Authorization: Bearer {{accessToken}}

@@ -1,0 +1,56 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SOA_CA2.DTOs;
+using SOA_CA2.Models;
+
+namespace SOA_CA2.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class PerformerBookingController : ControllerBase
+{
+    private readonly IPerformerBookingRepository _repository;
+
+    public PerformerBookingController(IPerformerBookingRepository repository)
+    {
+        _repository = repository;
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<PerformerBookingDto>> CreatePerformerBooking(
+        PerformerBookingRequestDto request, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var booking = new PerformerBooking
+        {
+            FestivalId = request.FestivalId,
+            PerformerId = request.PerformerId,
+            StartsAtUtc = request.StartsAtUtc!.Value,
+            EndsAtUtc = request.EndsAtUtc!.Value,
+            Fee = request.Fee!.Value
+        };
+
+        var result = await _repository.CreateAsync(booking, organiserId, cancellationToken);
+        return result switch
+        {
+            PerformerBookingCreateResult.Created => StatusCode(StatusCodes.Status201Created,
+                new PerformerBookingDto(booking.Id, booking.FestivalId, booking.PerformerId,
+                    booking.StartsAtUtc, booking.EndsAtUtc, booking.Fee)),
+            PerformerBookingCreateResult.FestivalNotFound => Problem(
+                statusCode: StatusCodes.Status404NotFound, title: "Festival not found."),
+            PerformerBookingCreateResult.PerformerNotFound => Problem(
+                statusCode: StatusCodes.Status404NotFound, title: "Performer not found."),
+            PerformerBookingCreateResult.OutsideFestivalDates => Problem(
+                statusCode: StatusCodes.Status400BadRequest, title: "The booking must be within the festival dates in UTC."),
+            PerformerBookingCreateResult.OverlappingBooking => Problem(
+                statusCode: StatusCodes.Status409Conflict, title: "The performer already has a booking during that time."),
+            _ => throw new InvalidOperationException($"Unexpected booking result: {result}")
+        };
+    }
+}
