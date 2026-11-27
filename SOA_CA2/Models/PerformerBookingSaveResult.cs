@@ -1,8 +1,9 @@
 namespace SOA_CA2.Models;
 
-public enum PerformerBookingCreateResult
+public enum PerformerBookingSaveResult
 {
-    Created,
+    Saved,
+    BookingNotFound,
     FestivalNotFound,
     PerformerNotFound,
     OutsideFestivalDates,

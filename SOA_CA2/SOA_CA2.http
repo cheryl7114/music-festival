@@ -35,6 +35,20 @@ Accept: application/json
 
 ###
 
+PUT {{SOA_CA2_HostAddress}}/api/PerformerBooking/{{bookingId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "festivalId": {{festivalId}},
+  "performerId": {{performerId}},
+  "startsAtUtc": "2027-06-18T19:30:00Z",
+  "endsAtUtc": "2027-06-18T20:30:00Z",
+  "fee": 275.00
+}
+
+###
+
 # Run organiser login first, then add a performer.
 POST {{SOA_CA2_HostAddress}}/api/Performer
 Authorization: Bearer {{accessToken}}

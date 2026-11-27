@@ -60,7 +60,32 @@ public class PerformerBookingController : ControllerBase
             return Unauthorized();
         }
 
-        var booking = new PerformerBooking
+        var booking = ToBooking(request);
+        var result = await _repository.CreateAsync(booking, organiserId, cancellationToken);
+        return result == PerformerBookingSaveResult.Saved
+            ? CreatedAtAction(nameof(GetPerformerBooking), new { id = booking.Id }, ToDto(booking))
+            : BookingError(result);
+    }
+
+    [Authorize]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdatePerformerBooking(
+        int id, PerformerBookingRequestDto request, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var booking = ToBooking(request);
+        booking.Id = id;
+        var result = await _repository.UpdateAsync(booking, organiserId, cancellationToken);
+        return result == PerformerBookingSaveResult.Saved ? NoContent() : BookingError(result);
+    }
+
+    private static PerformerBooking ToBooking(PerformerBookingRequestDto request)
+    {
+        return new PerformerBooking
         {
             FestivalId = request.FestivalId,
             PerformerId = request.PerformerId,
@@ -68,19 +93,21 @@ public class PerformerBookingController : ControllerBase
             EndsAtUtc = request.EndsAtUtc!.Value,
             Fee = request.Fee!.Value
         };
+    }
 
-        var result = await _repository.CreateAsync(booking, organiserId, cancellationToken);
+    private ObjectResult BookingError(PerformerBookingSaveResult result)
+    {
         return result switch
         {
-            PerformerBookingCreateResult.Created => CreatedAtAction(
-                nameof(GetPerformerBooking), new { id = booking.Id }, ToDto(booking)),
-            PerformerBookingCreateResult.FestivalNotFound => Problem(
+            PerformerBookingSaveResult.BookingNotFound => Problem(
+                statusCode: StatusCodes.Status404NotFound, title: "Booking not found."),
+            PerformerBookingSaveResult.FestivalNotFound => Problem(
                 statusCode: StatusCodes.Status404NotFound, title: "Festival not found."),
-            PerformerBookingCreateResult.PerformerNotFound => Problem(
+            PerformerBookingSaveResult.PerformerNotFound => Problem(
                 statusCode: StatusCodes.Status404NotFound, title: "Performer not found."),
-            PerformerBookingCreateResult.OutsideFestivalDates => Problem(
+            PerformerBookingSaveResult.OutsideFestivalDates => Problem(
                 statusCode: StatusCodes.Status400BadRequest, title: "The booking must be within the festival dates in UTC."),
-            PerformerBookingCreateResult.OverlappingBooking => Problem(
+            PerformerBookingSaveResult.OverlappingBooking => Problem(
                 statusCode: StatusCodes.Status409Conflict, title: "The performer already has a booking during that time."),
             _ => throw new InvalidOperationException($"Unexpected booking result: {result}")
         };
