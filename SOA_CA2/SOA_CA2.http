@@ -8,6 +8,19 @@
 
 ###
 
+# Use the ID of a festival you own.
+POST {{SOA_CA2_HostAddress}}/api/Expense
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "festivalId": {{festivalId}},
+  "description": "Sound equipment hire",
+  "amount": 250.25
+}
+
+###
+
 # Use one of your festivals and a performer from the shared catalogue.
 POST {{SOA_CA2_HostAddress}}/api/PerformerBooking
 Authorization: Bearer {{accessToken}}
