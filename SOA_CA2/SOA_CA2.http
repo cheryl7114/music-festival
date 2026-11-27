@@ -21,6 +21,12 @@ Content-Type: application/json
 
 ###
 
+GET {{SOA_CA2_HostAddress}}/api/PerformerBooking
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
 # Run organiser login first, then add a performer.
 POST {{SOA_CA2_HostAddress}}/api/Performer
 Authorization: Bearer {{accessToken}}

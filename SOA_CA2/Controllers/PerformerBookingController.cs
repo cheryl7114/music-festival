@@ -18,6 +18,20 @@ public class PerformerBookingController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<PerformerBookingDto>>> GetPerformerBookings(
+        CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var bookings = await _repository.ListAsync(organiserId, cancellationToken);
+        return Ok(bookings.Select(ToDto));
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<PerformerBookingDto>> CreatePerformerBooking(
         PerformerBookingRequestDto request, CancellationToken cancellationToken)
@@ -40,8 +54,7 @@ public class PerformerBookingController : ControllerBase
         return result switch
         {
             PerformerBookingCreateResult.Created => StatusCode(StatusCodes.Status201Created,
-                new PerformerBookingDto(booking.Id, booking.FestivalId, booking.PerformerId,
-                    booking.StartsAtUtc, booking.EndsAtUtc, booking.Fee)),
+                ToDto(booking)),
             PerformerBookingCreateResult.FestivalNotFound => Problem(
                 statusCode: StatusCodes.Status404NotFound, title: "Festival not found."),
             PerformerBookingCreateResult.PerformerNotFound => Problem(
@@ -52,5 +65,13 @@ public class PerformerBookingController : ControllerBase
                 statusCode: StatusCodes.Status409Conflict, title: "The performer already has a booking during that time."),
             _ => throw new InvalidOperationException($"Unexpected booking result: {result}")
         };
+    }
+
+    private static PerformerBookingDto ToDto(PerformerBooking booking)
+    {
+        // SQLite reads DateTime values without their original kind.
+        return new PerformerBookingDto(booking.Id, booking.FestivalId, booking.PerformerId,
+            DateTime.SpecifyKind(booking.StartsAtUtc, DateTimeKind.Utc),
+            DateTime.SpecifyKind(booking.EndsAtUtc, DateTimeKind.Utc), booking.Fee);
     }
 }

@@ -4,6 +4,15 @@ namespace SOA_CA2.Models;
 
 public class PerformerBookingRepository(FestivalContext context) : IPerformerBookingRepository
 {
+    public async Task<List<PerformerBooking>> ListAsync(int organiserId, CancellationToken cancellationToken)
+    {
+        return await context.PerformerBookings.AsNoTracking()
+            .Where(booking => context.Festivals.Any(festival =>
+                festival.Id == booking.FestivalId && festival.OrganiserId == organiserId))
+            .OrderBy(booking => booking.Id)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<PerformerBookingCreateResult> CreateAsync(
         PerformerBooking booking, int organiserId, CancellationToken cancellationToken)
     {
