@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace SOA_CA2.Models;
@@ -32,12 +33,25 @@ public class PerformerRepository(FestivalContext context) : IPerformerRepository
         return affectedRows > 0;
     }
 
-    public async Task<bool> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken)
+    public async Task<PerformerDeleteResult> DeleteAsync(
+        int id, int organiserId, CancellationToken cancellationToken)
     {
-        var affectedRows = await context.Performers
-            .Where(performer => performer.Id == id && performer.OrganiserId == organiserId)
-            .ExecuteDeleteAsync(cancellationToken);
+        const int sqliteForeignKeyConstraint = 787;
+        const int sqliteTriggerConstraint = 1811;
 
-        return affectedRows > 0;
+        try
+        {
+            var affectedRows = await context.Performers
+                .Where(performer => performer.Id == id && performer.OrganiserId == organiserId)
+                .ExecuteDeleteAsync(cancellationToken);
+
+            return affectedRows > 0 ? PerformerDeleteResult.Deleted : PerformerDeleteResult.NotFound;
+        }
+        // SQLite can report ON DELETE RESTRICT as a trigger constraint.
+        catch (SqliteException exception) when (
+            exception.SqliteExtendedErrorCode is sqliteForeignKeyConstraint or sqliteTriggerConstraint)
+        {
+            return PerformerDeleteResult.HasBookings;
+        }
     }
 }

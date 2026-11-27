@@ -3,6 +3,54 @@
 @festivalId = 1
 # After you add a performer, replace 1 with the performer ID from the response.
 @performerId = 1
+# After you create a booking, replace 1 with the booking ID from the response.
+@bookingId = 1
+
+###
+
+# Use one of your festivals and a performer from the shared catalogue.
+POST {{SOA_CA2_HostAddress}}/api/PerformerBooking
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "festivalId": {{festivalId}},
+  "performerId": {{performerId}},
+  "startsAtUtc": "2027-06-18T19:00:00Z",
+  "endsAtUtc": "2027-06-18T20:00:00Z",
+  "fee": 250.00
+}
+
+###
+
+GET {{SOA_CA2_HostAddress}}/api/PerformerBooking
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+GET {{SOA_CA2_HostAddress}}/api/PerformerBooking/{{bookingId}}
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+PUT {{SOA_CA2_HostAddress}}/api/PerformerBooking/{{bookingId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "festivalId": {{festivalId}},
+  "performerId": {{performerId}},
+  "startsAtUtc": "2027-06-18T19:30:00Z",
+  "endsAtUtc": "2027-06-18T20:30:00Z",
+  "fee": 275.00
+}
+
+###
+
+DELETE {{SOA_CA2_HostAddress}}/api/PerformerBooking/{{bookingId}}
+Authorization: Bearer {{accessToken}}
 
 ###
 

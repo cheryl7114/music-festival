@@ -11,6 +11,20 @@ public class FestivalContextModelSnapshot : ModelSnapshot
     {
         modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
+        modelBuilder.Entity("SOA_CA2.Models.PerformerBooking", entity =>
+        {
+            entity.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+            entity.Property<int>("FestivalId").HasColumnType("INTEGER");
+            entity.Property<int>("PerformerId").HasColumnType("INTEGER");
+            entity.Property<DateTime>("StartsAtUtc").HasColumnType("TEXT");
+            entity.Property<DateTime>("EndsAtUtc").HasColumnType("TEXT");
+            entity.Property<decimal>("Fee").HasColumnType("TEXT");
+            entity.HasKey("Id");
+            entity.HasIndex("FestivalId");
+            entity.HasIndex("PerformerId");
+            entity.ToTable("PerformerBookings");
+        });
+
         modelBuilder.Entity("SOA_CA2.Models.Performer", entity =>
         {
             entity.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
@@ -42,6 +56,21 @@ public class FestivalContextModelSnapshot : ModelSnapshot
             entity.HasKey("Id");
             entity.HasIndex("Email").IsUnique();
             entity.ToTable("Organisers");
+        });
+
+        modelBuilder.Entity("SOA_CA2.Models.PerformerBooking", entity =>
+        {
+            entity.HasOne("SOA_CA2.Models.Festival", null)
+                .WithMany()
+                .HasForeignKey("FestivalId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne("SOA_CA2.Models.Performer", null)
+                .WithMany()
+                .HasForeignKey("PerformerId")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired();
         });
 
         modelBuilder.Entity("SOA_CA2.Models.Festival", entity =>
