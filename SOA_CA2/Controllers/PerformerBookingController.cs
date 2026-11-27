@@ -32,6 +32,25 @@ public class PerformerBookingController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PerformerBookingDto>> GetPerformerBooking(
+        int id, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var booking = await _repository.FindAsync(id, organiserId, cancellationToken);
+        if (booking == null)
+        {
+            return NotFound();
+        }
+
+        return ToDto(booking);
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<PerformerBookingDto>> CreatePerformerBooking(
         PerformerBookingRequestDto request, CancellationToken cancellationToken)
@@ -53,8 +72,8 @@ public class PerformerBookingController : ControllerBase
         var result = await _repository.CreateAsync(booking, organiserId, cancellationToken);
         return result switch
         {
-            PerformerBookingCreateResult.Created => StatusCode(StatusCodes.Status201Created,
-                ToDto(booking)),
+            PerformerBookingCreateResult.Created => CreatedAtAction(
+                nameof(GetPerformerBooking), new { id = booking.Id }, ToDto(booking)),
             PerformerBookingCreateResult.FestivalNotFound => Problem(
                 statusCode: StatusCodes.Status404NotFound, title: "Festival not found."),
             PerformerBookingCreateResult.PerformerNotFound => Problem(

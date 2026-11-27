@@ -6,11 +6,21 @@ public class PerformerBookingRepository(FestivalContext context) : IPerformerBoo
 {
     public async Task<List<PerformerBooking>> ListAsync(int organiserId, CancellationToken cancellationToken)
     {
-        return await context.PerformerBookings.AsNoTracking()
-            .Where(booking => context.Festivals.Any(festival =>
-                festival.Id == booking.FestivalId && festival.OrganiserId == organiserId))
+        return await OwnedBookings(organiserId).AsNoTracking()
             .OrderBy(booking => booking.Id)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<PerformerBooking?> FindAsync(int id, int organiserId, CancellationToken cancellationToken)
+    {
+        return await OwnedBookings(organiserId).AsNoTracking()
+            .SingleOrDefaultAsync(booking => booking.Id == id, cancellationToken);
+    }
+
+    private IQueryable<PerformerBooking> OwnedBookings(int organiserId)
+    {
+        return context.PerformerBookings.Where(booking => context.Festivals.Any(festival =>
+            festival.Id == booking.FestivalId && festival.OrganiserId == organiserId));
     }
 
     public async Task<PerformerBookingCreateResult> CreateAsync(

@@ -3,6 +3,8 @@
 @festivalId = 1
 # After you add a performer, replace 1 with the performer ID from the response.
 @performerId = 1
+# After you create a booking, replace 1 with the booking ID from the response.
+@bookingId = 1
 
 ###
 
@@ -22,6 +24,12 @@ Content-Type: application/json
 ###
 
 GET {{SOA_CA2_HostAddress}}/api/PerformerBooking
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+GET {{SOA_CA2_HostAddress}}/api/PerformerBooking/{{bookingId}}
 Authorization: Bearer {{accessToken}}
 Accept: application/json
 
