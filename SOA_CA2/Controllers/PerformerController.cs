@@ -83,7 +83,14 @@ public class PerformerController : ControllerBase
             return Unauthorized();
         }
 
-        var deleted = await _repository.DeleteAsync(id, organiserId, cancellationToken);
-        return deleted ? NoContent() : NotFound();
+        var result = await _repository.DeleteAsync(id, organiserId, cancellationToken);
+        return result switch
+        {
+            PerformerDeleteResult.Deleted => NoContent(),
+            PerformerDeleteResult.HasBookings => Problem(
+                statusCode: StatusCodes.Status409Conflict,
+                title: "A performer with bookings cannot be deleted."),
+            _ => NotFound()
+        };
     }
 }

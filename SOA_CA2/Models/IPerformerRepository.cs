@@ -6,5 +6,5 @@ public interface IPerformerRepository
     Task<Performer?> FindAsync(int id, CancellationToken cancellationToken);
     Task AddAsync(Performer performer, CancellationToken cancellationToken);
     Task<bool> UpdateAsync(int id, int organiserId, string name, CancellationToken cancellationToken);
-    Task<bool> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken);
+    Task<PerformerDeleteResult> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken);
 }
