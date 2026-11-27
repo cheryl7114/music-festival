@@ -58,12 +58,7 @@ public class ExpenseController : ControllerBase
             return Unauthorized();
         }
 
-        var expense = new Expense
-        {
-            FestivalId = request.FestivalId,
-            Description = request.Description.Trim(),
-            Amount = request.Amount!.Value
-        };
+        var expense = ToExpense(request);
 
         if (!await _repository.TryAddAsync(expense, organiserId, cancellationToken))
         {
@@ -71,6 +66,32 @@ public class ExpenseController : ControllerBase
         }
 
         return CreatedAtAction(nameof(GetExpense), new { id = expense.Id }, ToDto(expense));
+    }
+
+    [Authorize]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateExpense(
+        int id, ExpenseRequestDto request, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var expense = ToExpense(request);
+        expense.Id = id;
+        var updated = await _repository.UpdateAsync(expense, organiserId, cancellationToken);
+        return updated ? NoContent() : NotFound();
+    }
+
+    private static Expense ToExpense(ExpenseRequestDto request)
+    {
+        return new Expense
+        {
+            FestivalId = request.FestivalId,
+            Description = request.Description.Trim(),
+            Amount = request.Amount!.Value
+        };
     }
 
     private static ExpenseDto ToDto(Expense expense)

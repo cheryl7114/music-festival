@@ -35,6 +35,19 @@ public class ExpenseRepository(FestivalContext context) : IExpenseRepository
         return true;
     }
 
+    public async Task<bool> UpdateAsync(Expense expense, int organiserId, CancellationToken cancellationToken)
+    {
+        var affectedRows = await OwnedExpenses(organiserId)
+            .Where(existing => existing.Id == expense.Id && context.Festivals.Any(festival =>
+                festival.Id == expense.FestivalId && festival.OrganiserId == organiserId))
+            .ExecuteUpdateAsync(update => update
+                .SetProperty(existing => existing.FestivalId, expense.FestivalId)
+                .SetProperty(existing => existing.Description, expense.Description)
+                .SetProperty(existing => existing.Amount, expense.Amount), cancellationToken);
+
+        return affectedRows > 0;
+    }
+
     private IQueryable<Expense> OwnedExpenses(int organiserId)
     {
         return context.Expenses.Where(expense => context.Festivals.Any(festival =>

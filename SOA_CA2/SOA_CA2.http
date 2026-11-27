@@ -35,6 +35,18 @@ Accept: application/json
 
 ###
 
+PUT {{SOA_CA2_HostAddress}}/api/Expense/{{expenseId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "festivalId": {{festivalId}},
+  "description": "Sound equipment and setup",
+  "amount": 300.00
+}
+
+###
+
 # Use one of your festivals and a performer from the shared catalogue.
 POST {{SOA_CA2_HostAddress}}/api/PerformerBooking
 Authorization: Bearer {{accessToken}}
