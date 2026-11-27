@@ -11,6 +11,17 @@ public class FestivalContextModelSnapshot : ModelSnapshot
     {
         modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
+        modelBuilder.Entity("SOA_CA2.Models.Expense", entity =>
+        {
+            entity.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+            entity.Property<int>("FestivalId").HasColumnType("INTEGER");
+            entity.Property<string>("Description").IsRequired().HasColumnType("TEXT");
+            entity.Property<decimal>("Amount").HasColumnType("TEXT");
+            entity.HasKey("Id");
+            entity.HasIndex("FestivalId");
+            entity.ToTable("Expenses");
+        });
+
         modelBuilder.Entity("SOA_CA2.Models.PerformerBooking", entity =>
         {
             entity.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
@@ -56,6 +67,15 @@ public class FestivalContextModelSnapshot : ModelSnapshot
             entity.HasKey("Id");
             entity.HasIndex("Email").IsUnique();
             entity.ToTable("Organisers");
+        });
+
+        modelBuilder.Entity("SOA_CA2.Models.Expense", entity =>
+        {
+            entity.HasOne("SOA_CA2.Models.Festival", null)
+                .WithMany()
+                .HasForeignKey("FestivalId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
         });
 
         modelBuilder.Entity("SOA_CA2.Models.PerformerBooking", entity =>

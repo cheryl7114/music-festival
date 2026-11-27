@@ -9,6 +9,7 @@ public class FestivalContext(DbContextOptions<FestivalContext> options)
     public DbSet<Organiser> Organisers { get; set; } = null!;
     public DbSet<Performer> Performers { get; set; } = null!;
     public DbSet<PerformerBooking> PerformerBookings { get; set; } = null!;
+    public DbSet<Expense> Expenses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,5 +34,10 @@ public class FestivalContext(DbContextOptions<FestivalContext> options)
             .WithMany()
             .HasForeignKey(booking => booking.PerformerId)
             .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Expense>()
+            .HasOne<Festival>()
+            .WithMany()
+            .HasForeignKey(expense => expense.FestivalId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
