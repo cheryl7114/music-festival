@@ -21,6 +21,12 @@ Content-Type: application/json
 
 ###
 
+GET {{SOA_CA2_HostAddress}}/api/Expense
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
 # Use one of your festivals and a performer from the shared catalogue.
 POST {{SOA_CA2_HostAddress}}/api/PerformerBooking
 Authorization: Bearer {{accessToken}}

@@ -18,6 +18,19 @@ public class ExpenseController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ExpenseDto>>> GetExpenses(CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var expenses = await _repository.ListAsync(organiserId, cancellationToken);
+        return Ok(expenses.Select(ToDto));
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<ExpenseDto>> CreateExpense(
         ExpenseRequestDto request, CancellationToken cancellationToken)
@@ -39,7 +52,11 @@ public class ExpenseController : ControllerBase
             return Problem(statusCode: StatusCodes.Status404NotFound, title: "Festival not found.");
         }
 
-        return StatusCode(StatusCodes.Status201Created,
-            new ExpenseDto(expense.Id, expense.FestivalId, expense.Description, expense.Amount));
+        return StatusCode(StatusCodes.Status201Created, ToDto(expense));
+    }
+
+    private static ExpenseDto ToDto(Expense expense)
+    {
+        return new ExpenseDto(expense.Id, expense.FestivalId, expense.Description, expense.Amount);
     }
 }
