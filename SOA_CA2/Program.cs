@@ -13,6 +13,7 @@ builder.Services.AddDbContext<FestivalContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Festivals")
         ?? "Data Source=festivals.db"));
 builder.Services.AddScoped<IFestivalRepository, FestivalRepository>();
+builder.Services.AddScoped<IPerformerRepository, PerformerRepository>();
 builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
 builder.Services.AddScoped<IPasswordHasher<Organiser>, PasswordHasher<Organiser>>();
 builder.Services.AddAuthentication(BearerTokenDefaults.AuthenticationScheme)

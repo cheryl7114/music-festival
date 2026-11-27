@@ -11,6 +11,16 @@ public class FestivalContextModelSnapshot : ModelSnapshot
     {
         modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
+        modelBuilder.Entity("SOA_CA2.Models.Performer", entity =>
+        {
+            entity.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+            entity.Property<string>("Name").IsRequired().HasColumnType("TEXT");
+            entity.Property<int>("OrganiserId").HasColumnType("INTEGER");
+            entity.HasKey("Id");
+            entity.HasIndex("OrganiserId");
+            entity.ToTable("Performers");
+        });
+
         modelBuilder.Entity("SOA_CA2.Models.Festival", entity =>
         {
             entity.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
@@ -40,6 +50,15 @@ public class FestivalContextModelSnapshot : ModelSnapshot
                 .WithMany()
                 .HasForeignKey("OrganiserId")
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity("SOA_CA2.Models.Performer", entity =>
+        {
+            entity.HasOne("SOA_CA2.Models.Organiser", null)
+                .WithMany()
+                .HasForeignKey("OrganiserId")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired();
         });
     }
 }
