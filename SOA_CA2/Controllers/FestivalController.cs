@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SOA_CA2.DTOs;
 using SOA_CA2.Models;
+using SOA_CA2.Services;
 
 namespace SOA_CA2.Controllers;
 
@@ -111,13 +112,8 @@ public class FestivalController : ControllerBase
         }
 
         var (bookingFees, expenses) = costs.Value;
-        var ticketPrice = request.TicketPrice!.Value;
-        var expectedTicketsSold = request.ExpectedTicketsSold!.Value;
-        var projectedRevenue = ticketPrice * expectedTicketsSold;
-        var totalCosts = bookingFees + expenses;
-
-        return new FestivalSimulationDto(id, ticketPrice, expectedTicketsSold, projectedRevenue,
-            bookingFees, expenses, totalCosts, projectedRevenue - totalCosts);
+        return FestivalSimulationCalculator.Calculate(
+            id, request.TicketPrice!.Value, request.ExpectedTicketsSold!.Value, bookingFees, expenses);
     }
 
     private static Festival ToFestival(FestivalRequestDto request)
