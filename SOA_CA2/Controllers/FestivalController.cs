@@ -31,6 +31,7 @@ public class FestivalController : ControllerBase
         return Ok(festivals.Select(ToDto));
     }
 
+    // 401 if the bearer token is missing or invalid.
     [Authorize]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FestivalDto>> GetFestival(int id, CancellationToken cancellationToken)
@@ -40,13 +41,14 @@ public class FestivalController : ControllerBase
             return Unauthorized();
         }
 
+        // The lookup only matches festivals owned by this organiser.
         var festival = await _repository.FindAsync(id, organiserId, cancellationToken);
         if (festival == null)
         {
-            return NotFound();
+            return NotFound(); // 404 if the festival is missing or belongs to someone else.
         }
 
-        return ToDto(festival);
+        return ToDto(festival); // 200 with the festival details for its owner.
     }
 
     [Authorize]
