@@ -20,6 +20,23 @@ public class FestivalRepository(FestivalContext context) : IFestivalRepository
                 cancellationToken);
     }
 
+    public async Task<(decimal BookingFees, decimal Expenses)?> GetCostsAsync(
+        int id, int organiserId, CancellationToken cancellationToken)
+    {
+        var costs = await context.Festivals
+            .Where(festival => festival.Id == id && festival.OrganiserId == organiserId)
+            .Select(festival => new
+            {
+                BookingFees = context.PerformerBookings.Where(booking => booking.FestivalId == festival.Id)
+                    .Sum(booking => booking.Fee),
+                Expenses = context.Expenses.Where(expense => expense.FestivalId == festival.Id)
+                    .Sum(expense => expense.Amount)
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return costs == null ? null : (costs.BookingFees, costs.Expenses);
+    }
+
     public async Task AddAsync(Festival festival, CancellationToken cancellationToken)
     {
         context.Festivals.Add(festival);

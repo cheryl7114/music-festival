@@ -10,6 +10,18 @@
 
 ###
 
+# Estimate profit or loss for a festival you own.
+POST {{SOA_CA2_HostAddress}}/api/Festival/{{festivalId}}/simulate
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticketPrice": 30.00,
+  "expectedTicketsSold": 500
+}
+
+###
+
 # Use the ID of a festival you own.
 POST {{SOA_CA2_HostAddress}}/api/Expense
 Authorization: Bearer {{accessToken}}
