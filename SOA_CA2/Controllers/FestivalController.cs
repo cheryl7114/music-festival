@@ -94,6 +94,32 @@ public class FestivalController : ControllerBase
         return deleted ? NoContent() : NotFound();
     }
 
+    [Authorize]
+    [HttpPost("{id:int}/simulate")]
+    public async Task<ActionResult<FestivalSimulationDto>> SimulateFestival(
+        int id, FestivalSimulationRequestDto request, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var costs = await _repository.GetCostsAsync(id, organiserId, cancellationToken);
+        if (costs == null)
+        {
+            return NotFound();
+        }
+
+        var (bookingFees, expenses) = costs.Value;
+        var ticketPrice = request.TicketPrice!.Value;
+        var expectedTicketsSold = request.ExpectedTicketsSold!.Value;
+        var projectedRevenue = ticketPrice * expectedTicketsSold;
+        var totalCosts = bookingFees + expenses;
+
+        return new FestivalSimulationDto(id, ticketPrice, expectedTicketsSold, projectedRevenue,
+            bookingFees, expenses, totalCosts, projectedRevenue - totalCosts);
+    }
+
     private static Festival ToFestival(FestivalRequestDto request)
     {
         return new Festival
