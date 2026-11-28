@@ -47,6 +47,11 @@ Content-Type: application/json
 
 ###
 
+DELETE {{SOA_CA2_HostAddress}}/api/Expense/{{expenseId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
 # Use one of your festivals and a performer from the shared catalogue.
 POST {{SOA_CA2_HostAddress}}/api/PerformerBooking
 Authorization: Bearer {{accessToken}}

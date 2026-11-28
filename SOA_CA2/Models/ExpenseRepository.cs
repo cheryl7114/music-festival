@@ -48,6 +48,15 @@ public class ExpenseRepository(FestivalContext context) : IExpenseRepository
         return affectedRows > 0;
     }
 
+    public async Task<bool> DeleteAsync(int id, int organiserId, CancellationToken cancellationToken)
+    {
+        var affectedRows = await OwnedExpenses(organiserId)
+            .Where(expense => expense.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return affectedRows > 0;
+    }
+
     private IQueryable<Expense> OwnedExpenses(int organiserId)
     {
         return context.Expenses.Where(expense => context.Festivals.Any(festival =>

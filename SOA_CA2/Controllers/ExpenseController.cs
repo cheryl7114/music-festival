@@ -84,6 +84,19 @@ public class ExpenseController : ControllerBase
         return updated ? NoContent() : NotFound();
     }
 
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteExpense(int id, CancellationToken cancellationToken)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var organiserId))
+        {
+            return Unauthorized();
+        }
+
+        var deleted = await _repository.DeleteAsync(id, organiserId, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
+
     private static Expense ToExpense(ExpenseRequestDto request)
     {
         return new Expense
